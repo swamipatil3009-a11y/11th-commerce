@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14213d">
+<title>Commerce Academy | Class 11</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#17233b;--muted:#65738a;--line:#dfe6f0;--blue:#315efb;--navy:#14213d;--green:#16845b;--amber:#a65b08;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--navy);color:white;padding:22px 16px}header .wrap,main{max-width:1100px;margin:auto}header h1{font-size:25px;margin:0}header p{margin:5px 0 0;color:#dbe5f5}
+main{padding:14px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}
+.stat,.panel,.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}.stat b{display:block;font-size:23px}.stat span,.muted,.hint{color:var(--muted);font-size:13px}
+nav{display:flex;gap:7px;flex-wrap:wrap;padding:8px 0 14px;position:sticky;top:0;background:var(--bg);z-index:5}
+nav button,.small{border:1px solid var(--line);background:white;border-radius:20px;padding:9px 12px;color:var(--ink);font:inherit;white-space:nowrap}
+nav button.active{background:var(--blue);color:white;border-color:var(--blue)}
+h2{font-size:20px;margin:4px 0 12px}h3{font-size:16px;margin:0 0 7px}.hidden{display:none!important}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+label{display:block;font-size:13px;font-weight:650;margin:10px 0 4px}input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:white;color:var(--ink);font:inherit}
+button.primary{background:var(--blue);color:white;border:0;border-radius:9px;padding:10px 14px;font-weight:650;font:inherit;cursor:pointer}
+button:disabled{opacity:.5}.small{border-radius:8px;padding:7px 10px;cursor:pointer}.pill{font-size:11px;padding:3px 8px;border-radius:20px;background:#eef2ff;color:#3446a5}.done{background:#dcfce7;color:#166534}.pending{background:#fff7ed;color:#9a5700}
+.item{border-bottom:1px solid var(--line);padding:12px 0}.item:last-child{border:0}.topic{font-weight:650}.date{font-size:12px;color:var(--muted)}
+.checkrow{display:flex;align-items:flex-start;gap:9px;margin:8px 0}.checkrow input{width:auto;margin-top:5px}
+.notice{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:11px;border-radius:10px;font-size:13px;margin:10px 0}
+.progress{height:9px;background:#e8edf5;border-radius:20px;overflow:hidden}.progress i{display:block;height:100%;background:var(--green)}
+.day{border:1px solid var(--line);border-radius:11px;margin:8px 0;background:white;padding:12px}
+footer{text-align:center;color:var(--muted);padding:24px 10px;font-size:12px}
+a{color:#234fd5;overflow-wrap:anywhere}.result{font-weight:650;margin-top:6px}.good{color:var(--green)}.bad{color:var(--red)}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}header h1{font-size:22px}nav{position:static}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Commerce Academy</h1><p>Class 11 Commerce · 24 Nov 2026 – 1 Feb 2027 · 3 hours daily</p></div></header>
+<main>
+<div class="stats">
+ <div class="stat"><b id="doneCount">0</b><span>Sessions completed</span></div>
+ <div class="stat"><b id="lectureCount">0</b><span>Lectures saved</span></div>
+ <div class="stat"><b id="backlogCount">0</b><span>Backlog sessions</span></div>
+ <div class="stat"><b id="questionCount">0</b><span>Built-in + your MCQs</span></div>
+</div>
+<nav id="nav">
+<button class="active" data-tab="today">Today</button><button data-tab="plan">Full Plan</button><button data-tab="lectures">Lecture Library</button><button data-tab="practice">MCQ Practice</button><button data-tab="subjective">Subjective Practice</button><button data-tab="backlog">Backlog</button><button data-tab="progress">Progress & Backup</button>
+</nav>
+
+<section id="today">
+<h2>Today's study</h2><div class="notice">Daily target: 3 hours = two 90-minute sessions. Each session: 30 min matching lecture · 20 min textbook/notes · 25 min today's questions · 15 min cumulative revision. CA Foundation is separate.</div>
+<div id="todayContent"></div>
+</section>
+
+<section id="plan" class="hidden">
+<h2>Complete day-wise plan</h2><p class="muted">Learning phase: 24 Nov 2026–17 Jan 2027. Revision and tests: 18 Jan–1 Feb 2027. Select a date or browse every day below.</p>
+<label>Jump to date</label><input type="date" id="datePick" min="2026-11-24" max="2027-02-01">
+<div id="selectedPlan"></div><h3 style="margin-top:18px">All 70 days</h3><div id="allPlan"></div>
+</section>
+
+<section id="lectures" class="hidden">
+<h2>Lecture library</h2><div class="notice">Add the academy video only after matching it to the exact topic. Date-named files are not automatically identified. Drive folders are saved as links; this page cannot scan private Drive folders by itself.</div>
+<div class="panel"><form id="lectureForm">
+<label>Subject</label><select id="lSubject"><option>Accountancy</option><option>OCM</option><option>Economics</option><option>Mathematics</option></select>
+<label>Chapter / topic</label><input id="lTopic" required placeholder="Exact topic from the plan">
+<label>Video date / file name</label><input id="lDate" placeholder="e.g. 24-11-2026">
+<label>Google Drive video or folder link</label><input id="lLink" type="url" required placeholder="https://drive.google.com/...">
+<label>Planned date</label><input id="lPlanDate" type="date"><button class="primary" style="margin-top:12px">Save lecture</button>
+</form></div><div id="lectureList"></div>
+</section>
+
+<section id="practice" class="hidden">
+<h2>MCQ practice</h2><div class="notice">The starter bank is built into this file and is automatically marked. Add your own MCQs as you complete textbook exercises. Questions are original practice questions aligned to the listed syllabus topics, not copied textbook exercises.</div>
+<div class="panel"><label>Subject</label><select id="quizSubject"><option>All</option><option>Accountancy</option><option>OCM</option><option>Economics</option><option>Mathematics</option></select>
+<label>Question count</label><select id="quizCount"><option>10</option><option>20</option><option>All available</option></select>
+<button class="primary" id="startQuiz" style="margin-top:10px">Start / Restart quiz</button><div id="quizArea"></div></div>
+<div class="panel" style="margin-top:12px"><h3>Add your own MCQ</h3><form id="qForm">
+<label>Subject</label><select id="qSubject"><option>Accountancy</option><option>OCM</option><option>Economics</option><option>Mathematics</option></select>
+<label>Topic</label><input id="qTopic" required><label>Question</label><textarea id="qText" required rows="2"></textarea>
+<label>Option A</label><input id="a" required><label>Option B</label><input id="b" required><label>Option C</label><input id="c" required><label>Option D</label><input id="d" required>
+<label>Correct option</label><select id="correct"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select><button class="primary" style="margin-top:12px">Add MCQ</button>
+</form></div><div id="questionList"></div>
+</section>
+
+<section id="subjective" class="hidden">
+<h2>Subjective answer practice</h2><div class="notice">Write your answer, then compare it with the checklist/model points. This is a self-review tool, not AI evaluation. Do not treat a checklist as an official marking scheme.</div>
+<label>Subject</label><select id="sSubject"><option>Accountancy</option><option>OCM</option><option>Economics</option><option>Mathematics</option></select>
+<label>Choose a practice prompt</label><select id="sPrompt"></select>
+<div class="panel" id="subjectiveCard"><p>Select a prompt to begin.</p></div>
+</section>
+
+<section id="backlog" class="hidden"><h2>Backlog</h2><p class="muted">Uncompleted sessions dated before today appear here. You can mark them complete from their day card.</p><div id="backlogList"></div></section>
+<section id="progress" class="hidden">
+<h2>Progress & Backup</h2><div class="panel"><div id="progressText"></div><div class="progress"><i id="progressBar" style="width:0%"></i></div><p class="muted">Progress is stored in this browser on this device. Export backups regularly. Clearing browser data may erase progress.</p>
+<button class="primary" id="exportBtn">Download backup</button> <button class="small" id="importBtn">Restore backup</button><input id="importFile" type="file" accept="application/json" hidden></div>
+<div class="panel" style="margin-top:10px"><h3>Study routine</h3><p>Per subject (90 minutes): 30m matching lecture · 20m textbook/notes · 25m topic questions · 15m cumulative revision.</p><p>Weekly rotation: Mon Accountancy + OCM; Tue Mathematics + Economics; Wed Accountancy + Economics; Thu OCM + Mathematics; Fri Accountancy + OCM; Sat Mathematics + Economics; Sun Accountancy + Mathematics.</p><p class="muted">AI subjective marking requires a protected backend. Never put a private API key in this public HTML file.</p></div>
+</section>
+<footer>Commerce Academy · Single-file edition · Save a backup regularly</footer>
+</main>
+
+<script>
+"use strict";
+const KEY="commerceAcademySingleFileV1";
+const chapters={
+Accountancy:[
+["Introduction to Book-Keeping and Accountancy",["Meaning, definition and objectives","Importance of Book-keeping","Book-keeping vs Accountancy","Meaning and definition of Accountancy","Basis of accounting system","Qualitative characteristics of accounting information","Basic accounting terminologies","Accounting concepts, conventions and principles","Accounting Standards and IFRS"]],
+["Meaning and Fundamentals of Double Entry Book-Keeping",["Methods of recording accounting information","Meaning and principles of Double Entry","Classification and types of accounts","Golden rules of accounts","Analysis of transactions and accounting equation","Accounting documents and source documents"]],
+["Journal",["Meaning, definition and importance of Journal","Specimen and format of Journal","Journal entries","GST on purchases and sales","Journal entry practice"]],
+["Ledger",["Meaning, definition and importance of Ledger","Specimen of Ledger","Posting from Journal and Subsidiary Books","Balancing Ledger accounts","Trial Balance"]],
+["Subsidiary Books",["Meaning and need for Subsidiary Books","Cash Book with cash column","Cash Book with cash and bank columns","Petty Cash Book and Imprest System","Purchase Book and Purchase Return Book","Sales Book and Sales Return Book","Journal Proper"]],
+["Bank Reconciliation Statement",["Meaning and need for BRS","Cash Book and Pass Book","Reasons for differences","Preparation of Bank Reconciliation Statement"]],
+["Depreciation",["Meaning and causes of depreciation","Methods and importance","Straight Line Method","Written Down Value Method","Comparison and numerical practice"]],
+["Rectification of Errors",["Meaning and effects of errors","Types of errors","Detection and rectification","Suspense Account"]],
+["Final Accounts of a Proprietary Concern",["Meaning, objectives and importance","Trading Account","Profit and Loss Account","Balance Sheet","Adjustments and their effects","Final Accounts problems"]],
+["Single Entry System",["Meaning and features","Single Entry vs Double Entry","Opening and Closing Statements of Affairs","Statement of Profit or Loss","Numerical practice"]]
+],
+OCM:[
+["Introduction of Commerce and Business",["Introduction","Non-Economic Activities","Economic Activities: Business, Profession and Employment","Business Objectives","Role of Profit in Business","Classification of Business Activities: Industry and Commerce"]],
+["Trade",["Meaning and types of trade","Internal trade","Wholesale trade","Retail trade","International trade","Auxiliaries to trade"]],
+["Small Scale Industry and Business",["Meaning and features","Types of small-scale industries","Importance and role","Problems and remedies","Government support"]],
+["Forms of Business Organisation – I",["Sole trading concern","Partnership","Joint Hindu Family business","Co-operative society"]],
+["Forms of Business Organisation – II",["Joint Stock Company","Public and private company","Global enterprises / multinational companies","Choosing a form of business organisation"]],
+["Institutes Supporting Business",["Support institutions and their role","Financial institutions","Insurance and other support services","Entrepreneurship and institutional assistance"]],
+["Business Environment",["Meaning and importance","Internal environment","External environment","Economic, social, political, technological and legal factors"]],
+["Introduction to Management",["Meaning and features","Objectives and importance","Functions of management","Levels and principles of management"]]
+],
+Economics:[
+["Basic Concepts in Economics",["Natural and social sciences","Meaning and definitions of Economics","Kautilya's views on Economics","Wealth, welfare, scarcity and growth definitions","Micro and Macro Economics","Wants and their characteristics","Utility, value, wealth and economic activities","Types of economic systems"]],
+["Money",["Meaning and evolution of money","Functions of money","Types and qualities of money","Role and importance of money","Barter system and its difficulties"]],
+["Partition Values",["Meaning and importance","Quartiles","Deciles","Percentiles","Numerical problems"]],
+["The Economy of Maharashtra",["Features of Maharashtra economy","Agriculture and industry","Service sector","Regional development and challenges"]],
+["Rural Development in India",["Meaning and importance","Rural infrastructure","Agricultural development","Rural finance and employment","Challenges and measures"]],
+["Population in India",["Meaning and features","Population growth and distribution","Causes and effects","Population policy and measures"]],
+["Unemployment in India",["Meaning and types","Causes","Effects","Measures to reduce unemployment"]],
+["Poverty in India",["Meaning and types","Causes","Effects","Poverty alleviation programmes"]],
+["Economic Policy of India Since 1991",["Background of 1991 reforms","Liberalisation","Privatisation","Globalisation","Effects and evaluation"]],
+["Economic Planning in India",["Meaning and objectives","Planning in India","Five Year Plans and institutions","Achievements and limitations"]]
+],
+Mathematics:[
+["Part I — Sets and Relations",["Meaning and definition of a set","Roster and set-builder methods","Intervals","Types of sets","Operations on sets","Ordered pairs and Cartesian product","Relations: domain, range and types"]],
+["Part I — Functions",["Meaning and definition of functions","Domain, codomain and range","Types of functions","Operations and composition of functions"]],
+["Part I — Complex Numbers",["Imaginary unit and complex numbers","Equality and algebra of complex numbers","Conjugate and modulus","Powers and simplification"]],
+["Part I — Sequences and Series",["Sequences and general term","Arithmetic progression","Geometric progression","Series and sums"]],
+["Part I — Locus and Straight Line",["Locus","Slope and forms of straight line","Equation of a line","Properties of lines"]],
+["Part I — Determinants",["Meaning and evaluation","Properties of determinants","Expansion and simplification","Linear equations"]],
+["Part I — Limits",["Meaning of limit","Evaluation of limits","Algebra of limits","Existence of limits"]],
+["Part I — Continuity",["Meaning of continuity","Continuity at a point","Continuity over an interval","Discontinuity"]],
+["Part I — Differentiation",["Meaning and first principles","Rules of differentiation","Derivatives of standard functions","Applications of derivatives"]],
+["Part II — Partition Values",["Quartiles","Deciles","Percentiles","Numerical problems"]],
+["Part II — Measures of Dispersion",["Range and coefficient","Quartile deviation","Mean deviation","Standard deviation and variance"]],
+["Part II — Skewness",["Meaning of skewness","Types of skewness","Measures of skewness"]],
+["Part II — Bivariate Frequency Distribution and Chi Square Statistic",["Bivariate frequency distribution","Contingency tables","Chi-square statistic","Interpretation and problems"]],
+["Part II — Correlation",["Meaning and types","Scatter diagram","Karl Pearson coefficient","Rank correlation"]],
+["Part II — Permutations and Combinations",["Fundamental counting principle","Factorial notation","Permutations","Combinations","Applications"]],
+["Part II — Probability",["Random experiments and events","Sample space","Probability rules","Addition and multiplication theorems"]],
+["Part II — Linear Inequations",["Linear inequalities","Solution in one variable","Graphical representation","Inequalities in two variables","Systems of inequalities"]],
+["Part II — Commercial Mathematics",["Commercial arithmetic foundations","Interest and financial calculations","Annuities and business applications","Commercial problem solving"]]
+]};
+const rotation={1:["Accountancy","OCM"],2:["Mathematics","Economics"],3:["Accountancy","Economics"],4:["OCM","Mathematics"],5:["Accountancy","OCM"],6:["Mathematics","Economics"],0:["Accountancy","Mathematics"]};
+const START="2026-11-24",END="2027-02-01",LEARN_END="2027-01-17";
+const iso=d=>{let x=new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0")};
+const parseDate=s=>new Date(s+"T12:00:00");
+const fmt=s=>parseDate(s).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeLoad=()=>{try{let x=JSON.parse(localStorage.getItem(KEY)||"null");if(x&&typeof x==="object")return {...{lectures:[],checks:{},questions:[],scores:[]},...x}}catch(e){}return {lectures:[],checks:{},questions:[],scores:[]}};
+let db=safeLoad();
+const dates=[];for(let d=parseDate(START);d<=parseDate(END);d.setDate(d.getDate()+1))dates.push(iso(d));
+const sessions={};Object.keys(chapters).forEach(s=>sessions[s]=[]);
+dates.filter(d=>d<=LEARN_END).forEach(d=>rotation[parseDate(d).getDay()].forEach(s=>sessions[s].push(d)));
+const assigned={};
+Object.keys(chapters).forEach(s=>{let tasks=[];chapters[s].forEach((c,ci)=>c[1].forEach((t,ti)=>tasks.push({chapter:c[0],topic:t,ci,ti})));let days=sessions[s];days.forEach((d,i)=>{let a=Math.floor(i*tasks.length/days.length),b=Math.max(a+1,Math.floor((i+1)*tasks.length/days.length));let part=tasks.slice(a,b);assigned[d+"|"+s]={subject:s,chapter:[...new Set(part.map(x=>x.chapter))].join(" + "),topic:part.map(x=>x.topic).join(" · "),block:"Learning"}})});
+function planFor(day){let rev=day>LEARN_END, subs=rotation[parseDate(day).getDay()];return subs.map(s=>{if(!rev)return assigned[day+"|"+s]||{subject:s,chapter:"Learning",topic:"Continue planned topics",block:"Learning"};let n=Math.max(0,Math.floor((parseDate(day)-parseDate(LEARN_END))/86400000)-1),ch=chapters[s][Math.min(chapters[s].length-1,Math.floor(n*chapters[s].length/15))];return {subject:s,chapter:ch[0],topic:"Revision and test: "+ch[1].slice(0,3).join(" · "),block:"Revision / test"}})}
+const qs=[
+["Accountancy","Book-keeping basics","Which is a main objective of book-keeping?",["To record financial transactions systematically","To manufacture goods","To recruit employees","To advertise products"],0],
+["Accountancy","Double Entry","Under the double entry system, each transaction affects:",["At least two accounts","Only one account","Only cash account","Only personal accounts"],0],
+["Accountancy","Golden rules","The traditional rule for a personal account is:",["Debit the receiver, credit the giver","Debit what comes in, credit what goes out","Debit all expenses, credit all incomes","Debit liabilities, credit assets"],0],
+["Accountancy","Journal","The book of original entry is generally called:",["Journal","Ledger","Trial Balance","Balance Sheet"],0],
+["Accountancy","Ledger","Posting means transferring entries from journal to:",["Ledger accounts","Cash memo","Invoice","Bank passbook"],0],
+["Accountancy","Subsidiary Books","A Purchase Book generally records:",["Credit purchases of goods","All cash purchases","Purchase of fixed assets only","All expenses"],0],
+["Accountancy","BRS","A Bank Reconciliation Statement explains differences between:",["Cash Book bank balance and Pass Book balance","Sales and purchases","Assets and liabilities","Journal and ledger totals"],0],
+["Accountancy","Depreciation","Depreciation is the systematic allocation of:",["Depreciable amount over useful life","Cash balance","Sales revenue","Owner's capital"],0],
+["Accountancy","Rectification","An error affecting the agreement of trial balance may be:",["A one-sided posting error","Complete omission","Error of principle","Compensating error"],0],
+["Accountancy","Final Accounts","Trading Account is prepared to find:",["Gross profit or gross loss","Net cash flow","Capital employed","Bank balance"],0],
+["Accountancy","Single Entry","Statement of Affairs is commonly used to ascertain:",["Capital under incomplete records","Gross purchases","Depreciation rate","Bank interest"],0],
+["OCM","Business","Which is an economic activity?",["Business","Hobby done only for pleasure","Voluntary leisure activity","Sleeping"],0],
+["OCM","Business objectives","Profit is important to business mainly because it:",["Supports survival and growth","Removes all business risk","Guarantees monopoly","Eliminates competition"],0],
+["OCM","Trade","Trade refers mainly to:",["Buying and selling of goods and services","Only manufacturing","Only transport","Only banking"],0],
+["OCM","Retail trade","A retailer generally sells goods to:",["Final consumers","Only manufacturers","Only wholesalers","Only exporters"],0],
+["OCM","International trade","Trade between two or more countries is:",["International trade","Internal trade","Retail trade","Barter within a village"],0],
+["OCM","Small business","One common contribution of small-scale businesses is:",["Employment generation","Elimination of all imports","Control of national currency","Making all firms public"],0],
+["OCM","Organisation","A sole trading concern is owned by:",["One individual","A government department only","A minimum of seven members","Shareholders only"],0],
+["OCM","Company","A joint stock company has its capital divided into:",["Shares","Daily wages","Invoices","Debentures only"],0],
+["OCM","Management","Management is commonly described as a process of:",["Planning, organising, staffing, directing and controlling","Only selling","Only accounting","Only purchasing"],0],
+["Economics","Basic concepts","Economics is classified mainly as a:",["Social science","Natural science","Physical science","Medical science"],0],
+["Economics","Microeconomics","Microeconomics studies:",["Individual economic units","The economy as a whole only","Only international politics","Only population census"],0],
+["Economics","Macroeconomics","Which is a macroeconomic topic?",["National income","Price of one specific brand","One consumer's demand","One firm's wage bill"],0],
+["Economics","Money","A primary function of money is:",["Medium of exchange","Weather forecasting","Production of goods","Fixing population"],0],
+["Economics","Barter","A major difficulty of barter is:",["Double coincidence of wants","Use of bank accounts","Electronic transfer","Common unit of account"],0],
+["Economics","Partition values","The median divides an arranged data set into:",["Two equal parts","Four equal parts","Ten equal parts","One hundred equal parts"],0],
+["Economics","Quartiles","Quartiles divide a data set into:",["Four equal parts","Two equal parts","Ten equal parts","Five equal parts"],0],
+["Economics","Rural development","Rural development includes improvement in:",["Rural infrastructure and livelihoods","Only city transport","Only stock exchanges","Only foreign trade"],0],
+["Economics","Unemployment","A person willing and able to work but unable to find work is:",["Unemployed","Retired by definition","A creditor","An exporter"],0],
+["Economics","Poverty","Poverty is commonly associated with:",["Insufficient resources to meet basic needs","High luxury consumption","Full employment","Surplus savings"],0],
+["Economics","1991 reforms","Liberalisation generally means:",["Reducing unnecessary government controls and restrictions","Closing all private firms","Banning international trade","Ending all competition"],0],
+["Mathematics","Sets","A well-defined collection of objects is called a:",["Set","Function","Matrix","Sequence"],0],
+["Mathematics","Sets","The symbol ∈ means:",["Is an element of","Is not an element of","Subset of","Empty set"],0],
+["Mathematics","Functions","In a function, each element of the domain has:",["Exactly one image in the codomain","At least two images","No image","An unlimited number of images"],0],
+["Mathematics","Complex numbers","The imaginary unit i satisfies:",["i² = -1","i² = 1","i = 0","i³ = 1"],0],
+["Mathematics","Sequences","An arithmetic progression has a constant:",["Common difference","Common ratio","Product","Factorial"],0],
+["Mathematics","Straight line","The slope of a horizontal line is:",["0","1","Undefined","-1"],0],
+["Mathematics","Determinants","A determinant is associated with a:",["Square matrix","Only a row matrix","Only a column matrix","Scalar alone"],0],
+["Mathematics","Limits","A limit describes the value a function approaches as:",["The input approaches a specified value","The input is always zero","The graph ends","The derivative becomes one"],0],
+["Mathematics","Continuity","A function continuous at a point has:",["Limit equal to function value there","No function value","Infinite discontinuity","No limit"],0],
+["Mathematics","Differentiation","Differentiation is used to find:",["Derivative or rate of change","Only area of a rectangle","Only matrix inverse","Only probability"],0],
+["Mathematics","Dispersion","Range is calculated as:",["Largest value minus smallest value","Largest plus smallest value","Mean divided by median","Sum divided by frequency"],0],
+["Mathematics","Correlation","Correlation measures:",["Degree and direction of relationship between variables","Only average","Only spread of one variable","Probability of an event"],0],
+["Mathematics","Permutations","Permutation is concerned with:",["Arrangements where order matters","Selections where order never matters","Only averages","Only equations"],0],
+["Mathematics","Probability","Probability of an impossible event is:",["0","1","0.5","-1"],0],
+["Mathematics","Linear inequations","A solution of an inequality is a value that makes it:",["True","False","Undefined","A matrix"],0]
+].map((x,i)=>({id:"seed"+i,subject:x[0],topic:x[1],text:x[2],opts:x[3],correct:x[4],seed:true}));
+function allQs(){return [...qs,...db.questions]}
+function checked(d,s){return !!db.checks[d+"|"+s]}
+function mark(d,s,v){db.checks[d+"|"+s]=v;save()}
+function taskHTML(day,t){let done=checked(day,t.subject),matches=db.lectures.filter(l=>l.subject===t.subject&&(t.topic.toLowerCase().includes(l.topic.toLowerCase())||l.topic.toLowerCase().includes(t.chapter.toLowerCase())));return `<div class="card" style="margin:9px 0"><div class="row"><span class="pill">${esc(t.subject)}</span><span class="pill ${done?"done":"pending"}">${done?"Completed":"Pending"}</span></div><h3 style="margin-top:8px">${esc(t.chapter)}</h3><div class="topic">${esc(t.topic)}</div><p class="muted">90 minutes: 30m lecture · 20m textbook · 25m topic questions · 15m cumulative revision.</p>${matches.length?matches.map(l=>`<p><a target="_blank" rel="noopener" href="${esc(l.link)}">Open saved lecture: ${esc(l.topic)}</a></p>`).join(""):'<p class="muted">No matching lecture saved yet. Add the exact topic in Lecture Library.</p>'}<label class="checkrow"><input type="checkbox" ${done?"checked":""} onchange="mark('${day}','${t.subject}',this.checked)"> Mark this 90-minute session complete</label></div>`}
+function renderToday(){let today=iso(new Date());if(today<START||today>END)today=START;document.getElementById("todayContent").innerHTML=`<b>${fmt(today)}</b>`+planFor(today).map(t=>taskHTML(today,t)).join("")}
+function renderPlan(){let d=document.getElementById("datePick").value||START;document.getElementById("selectedPlan").innerHTML=`<div class="day"><b>${fmt(d)}</b>${planFor(d).map(t=>taskHTML(d,t)).join("")}</div>`}
+function renderAllPlan(){document.getElementById("allPlan").innerHTML=dates.map(d=>`<details class="day"><summary><b>${fmt(d)}</b> · ${d>LEARN_END?"Revision / test":"Learning"} · ${planFor(d).map(t=>t.subject).join(" + ")}</summary>${planFor(d).map(t=>taskHTML(d,t)).join("")}</details>`).join("")}
+function renderLectures(){document.getElementById("lectureList").innerHTML=db.lectures.map((l,i)=>`<div class="item"><b>${esc(l.subject)} — ${esc(l.topic)}</b><div class="muted">${esc(l.dateName||"No file date")} · ${esc(l.planDate||"Unscheduled")}</div><a href="${esc(l.link)}" target="_blank" rel="noopener">Open Drive link</a> <button class="small" onclick="deleteLecture(${i})">Delete</button></div>`).join("")||'<p class="muted">No lectures saved yet.</p>'}
+function deleteLecture(i){db.lectures.splice(i,1);save()}
+function renderQuestions(){let a=allQs();document.getElementById("questionList").innerHTML=`<p class="muted">${qs.length} built-in questions + ${db.questions.length} personal questions. Your own questions can be deleted below.</p>`+db.questions.map((q,i)=>`<div class="item"><b>${esc(q.subject)} · ${esc(q.topic)}</b><p>${esc(q.text)}</p><button class="small" onclick="deleteQuestion(${i})">Delete</button></div>`).join("")}
+function deleteQuestion(i){db.questions.splice(i,1);save()}
+let currentQuiz=[];
+function runQuiz(){let subject=document.getElementById("quizSubject").value;let count=document.getElementById("quizCount").value;let list=allQs().filter(q=>subject==="All"||q.subject===subject).sort(()=>Math.random()-.5);currentQuiz=count==="All available"?list:list.slice(0,Math.min(+count,list.length));if(!currentQuiz.length){quizArea.innerHTML="<p>No questions available.</p>";return}quizArea.innerHTML=currentQuiz.map((q,i)=>`<div class="item"><b>${i+1}. ${esc(q.text)}</b><div class="muted">${esc(q.subject)} · ${esc(q.topic)}</div>${q.opts.map((o,j)=>`<label class="checkrow"><input type="radio" name="quiz${i}" value="${j}">${"ABCD"[j]}. ${esc(o)}</label>`).join("")}<div id="res${i}" class="result"></div></div>`).join("")+`<button class="primary" id="checkQuiz">Check answers</button><div id="scoreLine"></div>`;document.getElementById("checkQuiz").onclick=()=>{let score=0;currentQuiz.forEach((q,i)=>{let v=document.querySelector('input[name="quiz'+i+'"]:checked'),ok=v&&+v.value===q.correct;if(ok)score++;document.getElementById("res"+i).innerHTML=ok?'<span class="good">Correct</span>':`<span class="bad">Correct answer: ${"ABCD"[q.correct]}. ${esc(q.opts[q.correct])}</span>`});document.getElementById("scoreLine").innerHTML=`<h3>Score: ${score}/${currentQuiz.length} (${Math.round(score/currentQuiz.length*100)}%)</h3>`;db.scores.push({date:iso(new Date()),score,total:currentQuiz.length,subject});save()}};
+const subjectivePrompts={
+Accountancy:[["Explain the meaning and objectives of book-keeping.",["Meaning / systematic recording","Chronological recording of financial transactions","Useful financial information","Helps determine result and financial position"]],["Explain the double entry system and golden rules of accounts.",["Every transaction has debit and credit aspects","At least two accounts are affected","Personal account: debit receiver, credit giver","Real account: debit what comes in, credit what goes out","Nominal account: debit expenses/losses, credit incomes/gains"]],["Explain the purpose of a Bank Reconciliation Statement.",["Compares Cash Book and Pass Book balances","Identifies timing differences","Identifies errors or omissions","Helps verify bank balance"]],["Distinguish between Straight Line and Written Down Value methods.",["SLM charges equal depreciation each year","WDV applies a fixed rate to opening book value","Annual depreciation under WDV generally declines","Both allocate depreciable cost over useful life"]]],
+OCM:[["Distinguish between business, profession and employment.",["Nature of activity","Qualification / skill requirements","Capital investment","Reward: profit, professional fees, salary","Risk and responsibility"]],["Explain the importance of trade and auxiliaries to trade.",["Trade facilitates exchange","Transport creates place utility","Warehousing creates time utility","Banking supports finance and payments","Insurance covers specified risks","Advertising informs buyers"]],["Explain the functions of management.",["Planning","Organising","Staffing","Directing","Co-ordinating","Controlling"]]],
+Economics:[["Differentiate between microeconomics and macroeconomics.",["Micro studies individual units","Macro studies aggregates / whole economy","Suitable examples for each","Both are branches of economics"]],["Explain the difficulties of the barter system.",["Lack of double coincidence of wants","Lack of common measure of value","Difficulty in storing wealth","Difficulty in deferred payments","Problems of divisibility"]],["Explain quartiles, deciles and percentiles.",["Quartiles divide data into four equal parts","Deciles divide data into ten equal parts","Percentiles divide data into one hundred equal parts","State position / interpretation correctly"]]],
+Mathematics:[["Explain roster and set-builder methods with examples.",["Roster method lists elements inside braces","Set-builder method describes a property","Use correct notation","Give a valid example"]],["Find the median of 4, 7, 9, 11, 15 and explain the method.",["Data are already arranged","There are five observations","Median is the middle (third) observation","Median = 9"]],["Explain the meaning of probability and its basic range.",["Probability measures likelihood of an event","For an event E, 0 ≤ P(E) ≤ 1","Impossible event has probability 0","Certain event has probability 1"]]]
+};
+function updateSubjective(){let s=sSubject.value,sel=sPrompt.value;let arr=subjectivePrompts[s];sPrompt.innerHTML=arr.map((x,i)=>`<option value="${i}">${esc(x[0])}</option>`).join("");renderSubjective()}
+function renderSubjective(){let x=subjectivePrompts[sSubject.value][+sPrompt.value||0];subjectiveCard.innerHTML=`<h3>${esc(x[0])}</h3><label>Your answer</label><textarea id="myAnswer" rows="7" placeholder="Write your answer here..."></textarea><h3 style="margin-top:14px">Self-check points</h3>${x[1].map((p,i)=>`<label class="checkrow"><input type="checkbox" class="rubric"> ${esc(p)}</label>`).join("")}<p class="muted">Tick a point only if your answer clearly includes it. This is a study checklist, not AI grading.</p><button class="primary" id="scoreRubric">Review coverage</button><div id="rubricResult" class="result"></div>`;document.getElementById("scoreRubric").onclick=()=>{let n=[...document.querySelectorAll(".rubric")].filter(x=>x.checked).length;rubricResult.textContent=`Checklist coverage: ${n}/${x[1].length}. Improve any missing points and verify with your textbook.`}}
+function renderBacklog(){let today=iso(new Date()),out=[];dates.filter(d=>d<today).forEach(d=>planFor(d).forEach(t=>{if(!checked(d,t.subject))out.push({d,t})}));backlogList.innerHTML=out.length?out.map(x=>`<div class="item"><div class="date">${fmt(x.d)}</div><b>${esc(x.t.subject)} — ${esc(x.t.chapter)}</b><p>${esc(x.t.topic)}</p><button class="small" onclick="mark('${x.d}','${x.t.subject}',true)">Mark complete</button></div>`).join(""):"<p>No overdue sessions right now.</p>"}
+function renderProgress(){let done=Object.values(db.checks).filter(Boolean).length,total=dates.length*2,bl=0,today=iso(new Date());dates.filter(d=>d<today).forEach(d=>planFor(d).forEach(t=>{if(!checked(d,t.subject))bl++}));doneCount.textContent=done;lectureCount.textContent=db.lectures.length;backlogCount.textContent=bl;questionCount.textContent=allQs().length;progressText.textContent=`${done} completed session checks recorded. ${db.lectures.length} lectures saved. ${db.questions.length} personal MCQs added. ${db.scores.length} quiz attempts recorded.`;progressBar.style.width=Math.min(100,done/total*100)+"%"}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert("Browser storage is full. Download a backup and remove large data.");}renderAll()}
+function renderAll(){renderProgress();renderToday();renderPlan();renderAllPlan();renderLectures();renderQuestions();renderBacklog()}
+document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll("main>section").forEach(x=>x.classList.add("hidden"));document.getElementById(b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="subjective")updateSubjective();renderAll()}));
+datePick.value=START;datePick.addEventListener("change",renderPlan);
+lectureForm.addEventListener("submit",e=>{e.preventDefault();let link=lLink.value.trim();if(!/^https:\/\/(drive\.google\.com|docs\.google\.com)\//i.test(link)){alert("Please enter a Google Drive or Google Docs link.");return}db.lectures.push({subject:lSubject.value,topic:lTopic.value.trim(),dateName:lDate.value.trim(),link,planDate:lPlanDate.value});e.target.reset();save()});
+qForm.addEventListener("submit",e=>{e.preventDefault();db.questions.push({subject:qSubject.value,topic:qTopic.value.trim(),text:qText.value.trim(),opts:[a.value,b.value,c.value,d.value],correct:+correct.value});e.target.reset();save()});
+document.getElementById("startQuiz").addEventListener("click",runQuiz);
+sSubject.addEventListener("change",updateSubjective);sPrompt.addEventListener("change",renderSubjective);
+exportBtn.addEventListener("click",()=>{let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="commerce-academy-backup.json";a.click();URL.revokeObjectURL(a.href)});
+importBtn.addEventListener("click",()=>importFile.click());
+importFile.addEventListener("change",e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x||typeof x!=="object")throw Error();db={lectures:Array.isArray(x.lectures)?x.lectures:[],checks:x.checks&&typeof x.checks==="object"?x.checks:{},questions:Array.isArray(x.questions)?x.questions:[],scores:Array.isArray(x.scores)?x.scores:[]};save();alert("Backup restored.")}catch(err){alert("This backup file is invalid.")}};r.readAsText(f)});
+renderAll();
+</script>
+</body></html>
